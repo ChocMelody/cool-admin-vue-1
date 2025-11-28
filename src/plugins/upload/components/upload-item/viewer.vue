@@ -47,6 +47,7 @@ import { useCool } from '/@/cool';
 import { config } from '/@/config';
 import { createUniver, defaultTheme, LocaleType, merge, UniverInstanceType } from '@univerjs/presets';
 import { UniverSheetsAdvancedPreset } from '@univerjs/presets/preset-sheets-advanced';
+import { UniverSheetsCorePreset } from '@univerjs/preset-sheets-core';
 import UniverPresetZhCN from '@univerjs/preset-sheets-core/locales/zh-CN';
 import '@univerjs/presets/lib/styles/preset-sheets-advanced.css';
 import * as XLSX from 'xlsx';
@@ -188,9 +189,10 @@ async function initUniver(url: string) {
 			},
 			theme: defaultTheme,
 			presets: [
-				UniverSheetsAdvancedPreset({
+				UniverSheetsCorePreset({
 					container: 'univer-container',
 				}),
+				UniverSheetsAdvancedPreset(),
 			],
 		});
 
