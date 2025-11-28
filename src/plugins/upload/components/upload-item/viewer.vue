@@ -12,10 +12,11 @@
 
 	<!-- Univer -->
 	<cl-dialog
-		v-model="univer.visible"
+		v-model="univerVisible"
 		:title="$t('表格预览')"
 		fullscreen
 		:scrollbar="false"
+		@opened="onUniverOpened"
 		@closed="onUniverClosed"
 	>
 		<div id="univer-container" style="height: 100%; width: 100%"></div>
@@ -40,7 +41,7 @@ defineOptions({
 	name: 'file-viewer'
 });
 
-import { reactive, nextTick, onUnmounted } from 'vue';
+import { reactive, nextTick, onUnmounted, ref, shallowRef } from 'vue';
 import { getType } from '../../utils';
 import { useCool } from '/@/cool';
 import { config } from '/@/config';
@@ -66,11 +67,10 @@ const doc = reactive({
 });
 
 // Univer
-const univer = reactive({
-	visible: false,
-	instance: null as any,
-	api: null as any
-});
+const univerVisible = ref(false);
+const univerInstance = shallowRef<any>(null);
+const univerAPI = shallowRef<any>(null);
+const currentUrl = ref('');
 
 // 打开
 async function open(item: Upload.Item) {
@@ -91,12 +91,8 @@ async function open(item: Upload.Item) {
 
 		// 表格预览 (Univer)
 		if (['excel', 'xls', 'xlsx', 'csv'].includes(type)) {
-			univer.visible = true;
-
-			nextTick(() => {
-				initUniver(url);
-			});
-
+			currentUrl.value = url;
+			univerVisible.value = true;
 			return true;
 		}
 
@@ -119,14 +115,17 @@ async function open(item: Upload.Item) {
 	}
 }
 
+// Univer 打开回调
+function onUniverOpened() {
+	if (currentUrl.value) {
+		initUniver(currentUrl.value);
+	}
+}
+
 // 初始化 Univer
 async function initUniver(url: string) {
 	// 销毁旧实例
-	if (univer.instance) {
-		univer.instance.dispose();
-		univer.instance = null;
-		univer.api = null;
-	}
+	onUniverClosed();
 
 	// 处理跨域
 	let fetchUrl = url;
@@ -179,7 +178,7 @@ async function initUniver(url: string) {
 		};
 
 		// 创建实例
-		const { univer: instance, univerAPI } = createUniver({
+		const { univer, univerAPI: api } = createUniver({
 			locale: LocaleType.ZH_CN,
 			locales: {
 				[LocaleType.ZH_CN]: merge(
@@ -195,15 +194,15 @@ async function initUniver(url: string) {
 			],
 		});
 
-		univer.instance = instance;
-		univer.api = univerAPI;
+		univerInstance.value = univer;
+		univerAPI.value = api;
 
 		// 创建工作簿
 		// 使用 API 创建更安全
-		if (univer.api) {
-			univer.api.createUniverSheet(snapshot);
+		if (univerAPI.value) {
+			univerAPI.value.createUniverSheet(snapshot);
 		} else {
-			univer.instance.createUnit(UniverInstanceType.UNIVER_SHEET, snapshot);
+			univerInstance.value.createUnit(UniverInstanceType.UNIVER_SHEET, snapshot);
 		}
 	} catch (e) {
 		console.error('Univer init error:', e);
@@ -212,9 +211,14 @@ async function initUniver(url: string) {
 
 // Univer 关闭回调
 function onUniverClosed() {
-	if (univer.instance) {
-		univer.instance.dispose();
-		univer.instance = null;
+	if (univerInstance.value) {
+		try {
+			univerInstance.value.dispose();
+		} catch (e) {
+			console.error('Univer dispose error:', e);
+		}
+		univerInstance.value = null;
+		univerAPI.value = null;
 	}
 }
 
