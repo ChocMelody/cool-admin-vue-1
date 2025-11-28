@@ -1,12 +1,5 @@
 <template>
-	<cl-dialog
-		v-model="visible"
-		:title="$t('PDF 预览')"
-		top="5vh"
-		height="85vh"
-		width="80%"
-		:scrollbar="false"
-	>
+	<cl-dialog v-model="visible" :title="$t('PDF 预览')" fullscreen :scrollbar="false">
 		<div v-loading="loading" class="viewer-pdf">
 			<iframe :src="url" @load="onLoad" />
 		</div>

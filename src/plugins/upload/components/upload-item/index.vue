@@ -1,23 +1,15 @@
 <template>
 	<div class="cl-upload-item__wrap">
 		<keep-alive>
-			<div
-				class="cl-upload-item"
-				:class="[
-					{
-						'is-play': item.isPlay
-					}
-				]"
-				@contextmenu.stop.prevent="onContextMenu"
-			>
+			<div class="cl-upload-item" :class="[
+				{
+					'is-play': item.isPlay
+				}
+			]" @contextmenu.stop.prevent="onContextMenu">
 				<!-- 图片 -->
 				<template v-if="item.type === 'image' && !item.error">
-					<el-image
-						class="cl-upload-item__image-cover"
-						fit="contain"
-						:src="item.preload || url"
-						@error="item.error = $t('加载失败')"
-					/>
+					<el-image class="cl-upload-item__image-cover" fit="contain" :src="item.preload || url"
+						@error="item.error = $t('加载失败')" />
 				</template>
 
 				<!-- 视频 -->
@@ -46,13 +38,10 @@
 				</template>
 
 				<!-- 上传中 -->
-				<div
-					class="cl-upload-item__progress"
-					:class="{
-						'is-show': item.progress! >= 0 && item.progress! < 100,
-						'is-hide': item.progress == 100
-					}"
-				>
+				<div class="cl-upload-item__progress" :class="{
+					'is-show': item.progress! >= 0 && item.progress! < 100,
+					'is-hide': item.progress == 100
+				}">
 					<!-- 进度条 -->
 					<div class="cl-upload-item__progress-bar">
 						<el-progress :percentage="item.progress" :show-text="false" />
@@ -63,13 +52,9 @@
 				</div>
 
 				<!-- 角标 -->
-				<span
-					v-if="showTag"
-					class="cl-upload-item__tag"
-					:style="{
-						backgroundColor: tag.color
-					}"
-				>
+				<span v-if="showTag" class="cl-upload-item__tag" :style="{
+					backgroundColor: tag.color
+				}">
 					{{ tag.name }}
 				</span>
 
@@ -77,11 +62,7 @@
 					<!-- 工具 -->
 					<div class="cl-upload-item__actions">
 						<template v-if="media.isMedia">
-							<el-icon
-								v-if="item.isPlay"
-								class="action-pause"
-								@click.stop="media.pause()"
-							>
+							<el-icon v-if="item.isPlay" class="action-pause" @click.stop="media.pause()">
 								<video-pause />
 							</el-icon>
 
@@ -96,11 +77,11 @@
 							</el-icon>
 						</template>
 
-						<el-icon
-							v-if="!disabled || deletable"
-							class="action-delete"
-							@click.stop="remove"
-						>
+						<el-icon class="action-download" @click.stop="downloadFile">
+							<download />
+						</el-icon>
+
+						<el-icon v-if="!disabled || deletable" class="action-delete" @click.stop="remove">
 							<delete />
 						</el-icon>
 					</div>
@@ -119,7 +100,7 @@ defineOptions({
 });
 
 import { computed, type PropType, onMounted, watch, reactive } from 'vue';
-import { ZoomIn, Delete, VideoPause, VideoPlay } from '@element-plus/icons-vue';
+import { ZoomIn, Delete, VideoPause, VideoPlay, Download } from '@element-plus/icons-vue';
 import { ContextMenu } from '@cool-vue/crud';
 import { useCool } from '/@/cool';
 import { extname } from '/@/cool/utils';
@@ -176,6 +157,19 @@ function remove() {
 // 预览
 function preview() {
 	refs.viewer.open(props.item);
+}
+
+// 下载
+function downloadFile() {
+	if (!props.item.url) return;
+
+	const link = document.createElement('a');
+	link.href = props.item.url;
+	link.download = props.item.name || 'download';
+	link.target = '_blank';
+	document.body.appendChild(link);
+	link.click();
+	document.body.removeChild(link);
 }
 
 // 右键菜单
@@ -438,6 +432,7 @@ onMounted(() => {
 	0% {
 		border-color: var(--el-color-primary);
 	}
+
 	100% {
 		border-color: var(--el-fill-color-light);
 	}
