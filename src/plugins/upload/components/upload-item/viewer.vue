@@ -45,10 +45,9 @@ import { reactive, nextTick, onUnmounted, ref, shallowRef } from 'vue';
 import { getType } from '../../utils';
 import { useCool } from '/@/cool';
 import { config } from '/@/config';
-import { createUniver, defaultTheme, LocaleType, merge, UniverInstanceType } from '@univerjs/presets';
-import { UniverSheetsCorePreset } from '@univerjs/preset-sheets-core';
+import { createUniver, defaultTheme, LocaleType, merge, UniverInstanceType, UniverSheetsAdvancedPreset } from '@univerjs/presets';
 import UniverPresetZhCN from '@univerjs/preset-sheets-core/locales/zh-CN';
-import '@univerjs/preset-sheets-core/lib/index.css';
+import '@univerjs/presets/lib/styles/preset-sheets-advanced.css';
 import * as XLSX from 'xlsx';
 
 const { refs, setRefs } = useCool();
@@ -188,7 +187,7 @@ async function initUniver(url: string) {
 			},
 			theme: defaultTheme,
 			presets: [
-				UniverSheetsCorePreset({
+				UniverSheetsAdvancedPreset({
 					container: 'univer-container',
 				}),
 			],
