@@ -1,7 +1,7 @@
 <template>
-	<cl-dialog v-model="visible" :title="$t('表格预览')" fullscreen :scrollbar="false" @closed="onClosed">
-		<div v-loading="loading" class="excel-viewer">
-			<vue-office-excel v-if="excelUrl" :src="excelUrl" @rendered="onRendered" @error="onError" />
+	<cl-dialog v-model="visible" :title="$t('幻灯片预览')" fullscreen :scrollbar="false" @closed="onClosed">
+		<div v-loading="loading" class="pptx-viewer">
+			<vue-office-pptx v-if="pptUrl" :src="pptUrl" @rendered="onRendered" @error="onError" />
 		</div>
 	</cl-dialog>
 </template>
@@ -9,12 +9,11 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { config } from '/@/config';
-import VueOfficeExcel from '@vue-office/excel';
-import '@vue-office/excel/lib/v3/index.css';
+import VueOfficePptx from '@vue-office/pptx';
 
 const visible = ref(false);
 const loading = ref(false);
-const excelUrl = ref('');
+const pptUrl = ref('');
 
 function open(url: string) {
 	visible.value = true;
@@ -26,7 +25,7 @@ function open(url: string) {
 		fetchUrl = url.replace(config.host, config.baseUrl);
 	}
 
-	excelUrl.value = fetchUrl;
+	pptUrl.value = fetchUrl;
 }
 
 function close() {
@@ -39,11 +38,11 @@ function onRendered() {
 
 function onError(error: any) {
 	loading.value = false;
-	console.error('Excel 文件加载失败:', error);
+	console.error('PPT 文档加载失败:', error);
 }
 
 function onClosed() {
-	excelUrl.value = '';
+	pptUrl.value = '';
 	loading.value = false;
 }
 
@@ -54,9 +53,15 @@ defineExpose({
 </script>
 
 <style lang="scss" scoped>
-.excel-viewer {
+.pptx-viewer {
 	height: 100%;
 	width: 100%;
 	overflow: auto;
+
+	// 强制覆盖内部组件的固定高度
+	:deep(.pptx-preview-wrapper) {
+		height: 100% !important;
+		min-height: unset !important;
+	}
 }
 </style>

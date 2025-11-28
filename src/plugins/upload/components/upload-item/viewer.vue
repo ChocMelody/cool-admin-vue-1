@@ -1,33 +1,20 @@
 <template>
 	<div class="viewer-image">
 		<!-- 图片 -->
-		<el-image-viewer
-			v-if="img.visible"
-			:url-list="[img.url]"
-			infinite
-			teleported
-			@close="close"
-		/>
+		<el-image-viewer v-if="img.visible" :url-list="[img.url]" infinite teleported @close="close" />
 	</div>
 
-	<!-- Univer -->
+	<!-- Excel -->
 	<excel ref="excel" />
 
 	<!-- PDF -->
 	<pdf ref="pdf" />
 
-	<!-- 文档 -->
-	<cl-dialog
-		v-model="doc.visible"
-		:title="$t('文档预览')"
-		height="70vh"
-		width="80%"
-		:scrollbar="false"
-	>
-		<div v-loading="doc.loading" class="viewer-doc">
-			<iframe :ref="setRefs('docIframe')" :src="doc.url" />
-		</div>
-	</cl-dialog>
+	<!-- Word -->
+	<docx ref="docx" />
+
+	<!-- PPT -->
+	<pptx ref="pptx" />
 </template>
 
 <script lang="ts" setup>
@@ -35,24 +22,16 @@ defineOptions({
 	name: 'file-viewer'
 });
 
-import { reactive, nextTick, ref } from 'vue';
+import { reactive, ref } from 'vue';
 import { getType } from '/#/upload';
-import { useCool } from '/@/cool';
 import Excel from './excel.vue';
 import Pdf from './pdf.vue';
-
-const { refs, setRefs } = useCool();
+import Docx from './docx.vue';
+import Pptx from './pptx.vue';
 
 // 图片预览
 const img = reactive({
 	visible: false,
-	url: ''
-});
-
-// 文档预览
-const doc = reactive({
-	visible: false,
-	loading: false,
 	url: ''
 });
 
@@ -61,6 +40,12 @@ const excel = ref();
 
 // PDF
 const pdf = ref();
+
+// Word
+const docx = ref();
+
+// PPT
+const pptx = ref();
 
 // 打开
 async function open(item: Upload.Item) {
@@ -79,7 +64,7 @@ async function open(item: Upload.Item) {
 			return true;
 		}
 
-		// 表格预览 (Univer)
+		// 表格预览 (@vue-office/excel)
 		if (['excel', 'xls', 'xlsx', 'csv'].includes(type)) {
 			excel.value?.open(url);
 			return true;
@@ -91,18 +76,15 @@ async function open(item: Upload.Item) {
 			return true;
 		}
 
-		// 文档预览
-		if (['word', 'ppt'].includes(type)) {
-			doc.visible = true;
-			doc.loading = true;
-			doc.url = `https://view.officeapps.live.com/op/view.aspx?src=${decodeURIComponent(url)}`;
+		// Word 文档预览
+		if (type == 'word') {
+			docx.value?.open(url);
+			return true;
+		}
 
-			nextTick(() => {
-				refs.docIframe.onload = () => {
-					doc.loading = false;
-				};
-			});
-
+		// PPT 文档预览
+		if (type == 'ppt') {
+			pptx.value?.open(url);
 			return true;
 		}
 
@@ -123,16 +105,5 @@ defineExpose({
 <style lang="scss" scoped>
 .viewer-image {
 	position: absolute;
-}
-
-.viewer-doc {
-	height: 100%;
-	width: 100%;
-
-	iframe {
-		border: 0;
-		height: 100%;
-		width: 100%;
-	}
 }
 </style>
