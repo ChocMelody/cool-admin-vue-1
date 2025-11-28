@@ -13,6 +13,9 @@
 	<!-- Univer -->
 	<excel ref="excel" />
 
+	<!-- PDF -->
+	<pdf ref="pdf" />
+
 	<!-- 文档 -->
 	<cl-dialog
 		v-model="doc.visible"
@@ -36,6 +39,7 @@ import { reactive, nextTick, ref } from 'vue';
 import { getType } from '/#/upload';
 import { useCool } from '/@/cool';
 import Excel from './excel.vue';
+import Pdf from './pdf.vue';
 
 const { refs, setRefs } = useCool();
 
@@ -54,6 +58,9 @@ const doc = reactive({
 
 // Excel
 const excel = ref();
+
+// PDF
+const pdf = ref();
 
 // 打开
 async function open(item: Upload.Item) {
@@ -78,8 +85,14 @@ async function open(item: Upload.Item) {
 			return true;
 		}
 
+		// PDF 预览
+		if (type == 'pdf') {
+			pdf.value?.open(url);
+			return true;
+		}
+
 		// 文档预览
-		if (['word', 'ppt', 'pdf'].includes(type)) {
+		if (['word', 'ppt'].includes(type)) {
 			doc.visible = true;
 			doc.loading = true;
 			doc.url = `https://view.officeapps.live.com/op/view.aspx?src=${decodeURIComponent(url)}`;
