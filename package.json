@@ -5,6 +5,7 @@
 	"scripts": {
 		"dev": "vite --host",
 		"build": "vite build",
+		"build:no-captcha": "vite build --mode production.no-captcha",
 		"build-static": "vite build --mode static",
 		"build-demo": "vite build --mode demo",
 		"preview": "vite preview",

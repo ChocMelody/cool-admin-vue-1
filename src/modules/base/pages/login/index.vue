@@ -14,41 +14,23 @@
 			<div class="form">
 				<el-form label-position="top" class="form" :disabled="saving">
 					<el-form-item :label="$t('用户名')">
-						<el-input
-							v-model="form.username"
-							:placeholder="$t('请输入用户名')"
-							maxlength="20"
-						/>
+						<el-input v-model="form.username" :placeholder="$t('请输入用户名')" maxlength="20" />
 					</el-form-item>
 
 					<el-form-item :label="$t('密码')">
-						<el-input
-							v-model="form.password"
-							type="password"
-							:placeholder="$t('请输入密码')"
-							maxlength="20"
-							show-password
-							autocomplete="new-password"
-						/>
+						<el-input v-model="form.password" type="password" :placeholder="$t('请输入密码')" maxlength="20"
+							show-password autocomplete="new-password" />
 					</el-form-item>
 
-					<el-form-item :label="$t('验证码')">
-						<el-input
-							v-model="form.verifyCode"
-							:placeholder="$t('验证码')"
-							maxlength="4"
-							@keyup.enter="toLogin"
-						>
+					<el-form-item :label="$t('验证码')" v-if="captcha">
+						<el-input v-model="form.verifyCode" :placeholder="$t('验证码')" maxlength="4"
+							@keyup.enter="toLogin">
 							<template #suffix>
-								<pic-captcha
-									:ref="setRefs('picCaptcha')"
-									v-model="form.captchaId"
-									@change="
-										() => {
-											form.verifyCode = '';
-										}
-									"
-								/>
+								<pic-captcha :ref="setRefs('picCaptcha')" v-model="form.captchaId" @change="
+									() => {
+										form.verifyCode = '';
+									}
+								" />
 							</template>
 						</el-input>
 					</el-form-item>
@@ -89,6 +71,12 @@ const { t } = useI18n();
 
 // 状态
 const saving = ref(false);
+// 在生产环境使用构建时的配置,开发环境使用 localStorage 的动态配置
+const captcha = ref(
+	import.meta.env.MODE === 'development'
+		? storage.get('devTools.captcha') !== false
+		: import.meta.env.VITE_REQUIRE_CAPTCHA === 'true'
+);
 
 // 表单数据
 const form = reactive({
@@ -114,7 +102,7 @@ async function toLogin() {
 		return ElMessage.error(t('密码不能为空'));
 	}
 
-	if (!form.verifyCode) {
+	if (captcha.value && !form.verifyCode) {
 		return ElMessage.error(t('图片验证码不能为空'));
 	}
 
@@ -122,7 +110,14 @@ async function toLogin() {
 
 	try {
 		// 登录
-		await service.base.open.login(form).then(user.setToken);
+		if (captcha.value) {
+			await service.base.open.login(form).then(user.setToken);
+		} else {
+			await (service.base.open as any).loginByPassword({
+				username: form.username,
+				password: form.password
+			}).then(user.setToken);
+		}
 
 		// token 事件
 		await Promise.all(app.events.hasToken.map(e => e()));

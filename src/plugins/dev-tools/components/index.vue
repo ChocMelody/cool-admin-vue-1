@@ -1,11 +1,8 @@
 <template>
 	<teleport to="body">
-		<div
-			class="dev-tools"
-			:class="{
-				'is-open': visible
-			}"
-		>
+		<div class="dev-tools" :class="{
+			'is-open': visible
+		}">
 			<div class="content">
 				<el-scrollbar>
 					<div class="inner" v-if="info">
@@ -19,33 +16,19 @@
 					<img :src="Logo" />
 				</div>
 
-				<el-tooltip
-					v-for="item in tabList"
-					:key="item.value"
-					:content="item.label"
-					placement="left"
-				>
-					<div
-						class="item"
-						:class="{
-							'is-active': item.value == tab.active
-						}"
-						@click="tab.change(item)"
-					>
+				<el-tooltip v-for="item in tabList" :key="item.value" :content="item.label" placement="left">
+					<div class="item" :class="{
+						'is-active': item.value == tab.active
+					}" @click="tab.change(item)">
 						<i class="iconfont" :class="item.icon"></i>
 					</div>
 				</el-tooltip>
 			</div>
 		</div>
 
-		<div
-			class="dev-tools__close hidden-sm-and-down"
-			:class="{
-				'is-hide': !visible
-			}"
-			@click="open"
-			v-if="isDev"
-		>
+		<div class="dev-tools__close hidden-sm-and-down" :class="{
+			'is-hide': !visible
+		}" @click="open" v-if="isDev">
 			<i class="iconfont icon-xia"></i>
 		</div>
 	</teleport>
@@ -59,6 +42,7 @@ import { service, storage } from '/@/cool';
 import { checkPerm, useBase } from '/$/base';
 
 import Logo from '../static/logo.png';
+import ToolBase from './base.vue';
 import ToolEps from './eps.vue';
 import ToolDict from './dict.vue';
 import ToolProxy from './proxy.vue';
@@ -70,6 +54,7 @@ const { t } = useI18n();
 const { user } = useBase();
 
 const components = {
+	base: ToolBase,
 	eps: ToolEps,
 	dict: ToolDict,
 	proxy: ToolProxy,
@@ -81,6 +66,11 @@ const tab = reactive({
 	active: storage.get('devTools.tab') || 'eps',
 
 	list: [
+		{
+			label: t('基础设置'),
+			value: 'base',
+			icon: 'icon-shezhi'
+		},
 		{
 			label: 'Eps',
 			value: 'eps',

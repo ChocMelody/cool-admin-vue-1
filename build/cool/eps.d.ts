@@ -961,26 +961,6 @@ declare namespace Eps {
 		description?: string;
 
 		/**
-		 * 生日
-		 */
-		birthday?: string;
-
-		/**
-		 * 省
-		 */
-		province?: string;
-
-		/**
-		 * 市
-		 */
-		city?: string;
-
-		/**
-		 * 区
-		 */
-		district?: string;
-
-		/**
 		 * 创建时间
 		 */
 		createTime?: string;
@@ -997,6 +977,8 @@ declare namespace Eps {
 	}
 
 	type json = any;
+
+	type DictKey = "brand" | "occupation";
 
 	interface PagePagination {
 		size: number;
@@ -1177,6 +1159,11 @@ declare namespace Eps {
 
 	interface BaseOpen {
 		/**
+		 * 登录(无需验证码)
+		 */
+		loginByPassword(data?: any): Promise<any>;
+
+		/**
 		 * 刷新token
 		 */
 		refreshToken(data?: any): Promise<any>;
@@ -1205,6 +1192,7 @@ declare namespace Eps {
 		 * 权限标识
 		 */
 		permission: {
+			loginByPassword: string;
 			refreshToken: string;
 			captcha: string;
 			login: string;
@@ -1216,6 +1204,7 @@ declare namespace Eps {
 		 * 权限状态
 		 */
 		_permission: {
+			loginByPassword: boolean;
 			refreshToken: boolean;
 			captcha: boolean;
 			login: boolean;
@@ -2205,8 +2194,6 @@ declare namespace Eps {
 	}
 
 	type Request = (options: RequestOptions) => Promise<any>;
-
-	type DictKey = "brand" | "occupation";
 
 	type Service = {
 		request: Request;
