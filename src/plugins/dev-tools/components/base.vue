@@ -1,7 +1,7 @@
 <template>
     <div class="dt-base">
         <div class="item">
-            <span>{{ t('需要验证码') }}</span>
+            <span>{{ t('登录需要验证码') }}</span>
             <el-switch v-model="captcha" @change="onChange" />
         </div>
     </div>

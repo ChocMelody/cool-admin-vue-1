@@ -43,7 +43,8 @@ defineOptions({
 import { reactive, nextTick, onUnmounted } from 'vue';
 import { getType } from '../../utils';
 import { useCool } from '/@/cool';
-import { createUniver, defaultTheme, LocaleType, merge } from '@univerjs/presets';
+import { config } from '/@/config';
+import { createUniver, defaultTheme, LocaleType, merge, UniverInstanceType } from '@univerjs/presets';
 import { UniverSheetsCorePreset } from '@univerjs/preset-sheets-core';
 import UniverPresetZhCN from '@univerjs/preset-sheets-core/locales/zh-CN';
 import '@univerjs/preset-sheets-core/lib/index.css';
@@ -124,73 +125,89 @@ async function initUniver(url: string) {
 	if (univer.instance) {
 		univer.instance.dispose();
 		univer.instance = null;
+		univer.api = null;
 	}
 
-	// 获取文件流
-	const res = await fetch(url);
-	const buffer = await res.arrayBuffer();
+	// 处理跨域
+	let fetchUrl = url;
+	if (config.host && url.startsWith(config.host)) {
+		fetchUrl = url.replace(config.host, config.baseUrl);
+	}
 
-	// 解析 Excel
-	const workbook = XLSX.read(buffer);
+	try {
+		// 获取文件流
+		const res = await fetch(fetchUrl);
+		const buffer = await res.arrayBuffer();
 
-	// 转换为 Univer 数据
-	const sheets: Record<string, any> = {};
-	const sheetOrder: string[] = [];
+		// 解析 Excel
+		const workbook = XLSX.read(buffer);
 
-	workbook.SheetNames.forEach((name) => {
-		const sheet = workbook.Sheets[name];
-		const id = name;
-		sheetOrder.push(id);
+		// 转换为 Univer 数据
+		const sheets: Record<string, any> = {};
+		const sheetOrder: string[] = [];
 
-		const cellData: Record<number, Record<number, any>> = {};
-		const data = XLSX.utils.sheet_to_json(sheet, { header: 1 }) as any[][];
+		workbook.SheetNames.forEach((name) => {
+			const sheet = workbook.Sheets[name];
+			const id = name;
+			sheetOrder.push(id);
 
-		data.forEach((row, r) => {
-			if (!cellData[r]) cellData[r] = {};
-			row.forEach((cell, c) => {
-				cellData[r][c] = { v: cell };
+			const cellData: Record<number, Record<number, any>> = {};
+			const data = XLSX.utils.sheet_to_json(sheet, { header: 1 }) as any[][];
+
+			data.forEach((row, r) => {
+				if (!cellData[r]) cellData[r] = {};
+				row.forEach((cell, c) => {
+					cellData[r][c] = { v: cell };
+				});
 			});
+
+			sheets[id] = {
+				id,
+				name,
+				cellData
+			};
 		});
 
-		sheets[id] = {
-			id,
-			name,
-			cellData
+		const snapshot = {
+			id: 'workbook-01',
+			name: 'Excel Preview',
+			appVersion: '3.0.0',
+			locale: LocaleType.ZH_CN,
+			styles: {},
+			sheets,
+			sheetOrder
 		};
-	});
 
-	const snapshot = {
-		id: 'workbook-01',
-		name: 'Excel Preview',
-		appVersion: '3.0.0',
-		locale: LocaleType.ZH_CN,
-		styles: {},
-		sheets,
-		sheetOrder
-	};
+		// 创建实例
+		const { univer: instance, univerAPI } = createUniver({
+			locale: LocaleType.ZH_CN,
+			locales: {
+				[LocaleType.ZH_CN]: merge(
+					{},
+					UniverPresetZhCN
+				),
+			},
+			theme: defaultTheme,
+			presets: [
+				UniverSheetsCorePreset({
+					container: 'univer-container',
+				}),
+			],
+		});
 
-	// 创建实例
-	const { univer: instance, univerAPI } = createUniver({
-		locale: LocaleType.ZH_CN,
-		locales: {
-			[LocaleType.ZH_CN]: merge(
-				{},
-				UniverPresetZhCN
-			),
-		},
-		theme: defaultTheme,
-		presets: [
-			UniverSheetsCorePreset({
-				container: 'univer-container',
-			}),
-		],
-	});
+		univer.instance = instance;
+		univer.api = univerAPI;
 
-	univer.instance = instance;
-	univer.api = univerAPI;
-
-	// 创建工作簿
-	univer.instance.createUnit(0, snapshot);
+		// 创建工作簿
+		// 使用 API 创建更安全
+		if (univer.api) {
+			univer.api.createUniverSheet(snapshot);
+		} else {
+			univer.instance.createUnit(UniverInstanceType.UNIVER_SHEET, snapshot);
+		}
+	} catch (e) {
+		console.error('Univer init error:', e);
+	}
 }
 
 // Univer 关闭回调
