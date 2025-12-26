@@ -12,6 +12,6 @@
   "[cl-import-btn] onSubmit is required": "[cl-import-btn] onSubmit is required",
   "导出数据异常": "Export data exception",
   "导出": "Export",
-  "选择列": "Select Columns",
+  "选择列": "Select columns",
   "请先选择要导出的列": "Please select the columns to be exported first"
 }

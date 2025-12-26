@@ -1,17 +1,16 @@
 {
-  "表格预览": "Table Preview",
-  "Eps 错误，请在后端代码中设置：": "Eps error, please set in backend code:",
+  "基础设置": "Basic Settings",
   "代理请求": "Proxy Request",
-  "刷新": "Refresh",
-  "去添加": "Go to add",
-  "基础设置": "Basic Setting",
   "字典": "Dictionary",
-  "提示": "Tip",
-  "搜索关键字": "Search Keyword",
+  "账号": "Account",
   "文档": "Document",
-  "是否删除该账号？": "Delete this account?",
+  "刷新": "Refresh",
+  "搜索关键字": "Search Keyword",
+  "Eps 错误，请在后端代码中设置：": "Eps error, please set in the backend code:",
   "没有可用的字典": "No available dictionary",
+  "请添加新的字典条目": "Please add a new dictionary entry",
+  "去添加": "Go to add",
   "登录需要验证码": "Login requires verification code",
-  "请添加新的字典条目": "Please add new dictionary entry",
-  "账号": "Account"
+  "是否删除该账号？": "Do you want to delete this account?",
+  "提示": "Tip"
 }
