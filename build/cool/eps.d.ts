@@ -502,6 +502,226 @@ declare namespace Eps {
 		[key: string]: any;
 	}
 
+	interface IotDeviceEntity {
+		/**
+		 * ID
+		 */
+		id?: number;
+
+		/**
+		 * 关联站点 ID
+		 */
+		stationId?: number;
+
+		/**
+		 * 设备编号
+		 */
+		deviceCode?: string;
+
+		/**
+		 * 监听的 MQTT Topic
+		 */
+		mqttTopic?: string;
+
+		/**
+		 * 设备类型
+		 */
+		type?: string;
+
+		/**
+		 * 创建时间
+		 */
+		createTime?: string;
+
+		/**
+		 * 更新时间
+		 */
+		updateTime?: string;
+
+		/**
+		 * 任意键值
+		 */
+		[key: string]: any;
+	}
+
+	interface IotProductEntity {
+		/**
+		 * ID
+		 */
+		id?: number;
+
+		/**
+		 * 生产批次号
+		 */
+		batchNo?: string;
+
+		/**
+		 * 产品唯一码
+		 */
+		productCode?: string;
+
+		/**
+		 * 当前所在站点
+		 */
+		currentStationId?: number;
+
+		/**
+		 * 状态 0:生产中, 1:完成, 2:异常
+		 */
+		status?: number;
+
+		/**
+		 * 开始生产时间
+		 */
+		startTime?: string;
+
+		/**
+		 * 完成时间
+		 */
+		endTime?: string;
+
+		/**
+		 * 创建时间
+		 */
+		createTime?: string;
+
+		/**
+		 * 更新时间
+		 */
+		updateTime?: string;
+
+		/**
+		 * 任意键值
+		 */
+		[key: string]: any;
+	}
+
+	interface IotProductionLineEntity {
+		/**
+		 * ID
+		 */
+		id?: number;
+
+		/**
+		 * 产线名称
+		 */
+		name?: string;
+
+		/**
+		 * 产线编号
+		 */
+		code?: string;
+
+		/**
+		 * 描述
+		 */
+		description?: string;
+
+		/**
+		 * 3D场景配置
+		 */
+		sceneConfig?: any;
+
+		/**
+		 * 创建时间
+		 */
+		createTime?: string;
+
+		/**
+		 * 更新时间
+		 */
+		updateTime?: string;
+
+		/**
+		 * 任意键值
+		 */
+		[key: string]: any;
+	}
+
+	interface IotProductionLogEntity {
+		/**
+		 * ID
+		 */
+		id?: number;
+
+		/**
+		 * 关联产品
+		 */
+		productId?: number;
+
+		/**
+		 * 关联站点
+		 */
+		stationId?: number;
+
+		/**
+		 * 原始采集数据
+		 */
+		dataPayload?: any;
+
+		/**
+		 * 创建时间
+		 */
+		createTime?: string;
+
+		/**
+		 * 更新时间
+		 */
+		updateTime?: string;
+
+		/**
+		 * 任意键值
+		 */
+		[key: string]: any;
+	}
+
+	interface IotStationEntity {
+		/**
+		 * ID
+		 */
+		id?: number;
+
+		/**
+		 * 关联产线 ID
+		 */
+		lineId?: number;
+
+		/**
+		 * 站点名称
+		 */
+		name?: string;
+
+		/**
+		 * 工序顺序
+		 */
+		orderNum?: number;
+
+		/**
+		 * 3D世界坐标 {x, y, z}
+		 */
+		position?: any;
+
+		/**
+		 * 站点对应的3D模型资源
+		 */
+		modelAsset?: string;
+
+		/**
+		 * 创建时间
+		 */
+		createTime?: string;
+
+		/**
+		 * 更新时间
+		 */
+		updateTime?: string;
+
+		/**
+		 * 任意键值
+		 */
+		[key: string]: any;
+	}
+
 	interface PluginInfoEntity {
 		/**
 		 * ID
@@ -1031,6 +1251,31 @@ declare namespace Eps {
 	interface DictTypePageResponse {
 		pagination: PagePagination;
 		list: DictTypeEntity[];
+	}
+
+	interface IotDevicePageResponse {
+		pagination: PagePagination;
+		list: IotDeviceEntity[];
+	}
+
+	interface IotProductPageResponse {
+		pagination: PagePagination;
+		list: IotProductEntity[];
+	}
+
+	interface IotProduction_linePageResponse {
+		pagination: PagePagination;
+		list: IotProductionLineEntity[];
+	}
+
+	interface IotProduction_logPageResponse {
+		pagination: PagePagination;
+		list: IotProductionLogEntity[];
+	}
+
+	interface IotStationPageResponse {
+		pagination: PagePagination;
+		list: IotStationEntity[];
 	}
 
 	interface PluginInfoPageResponse {
@@ -1778,6 +2023,286 @@ declare namespace Eps {
 		request: Request;
 	}
 
+	interface IotDevice {
+		/**
+		 * 删除
+		 */
+		delete(data?: any): Promise<any>;
+
+		/**
+		 * 修改
+		 */
+		update(data?: any): Promise<any>;
+
+		/**
+		 * 单个信息
+		 */
+		info(data?: any): Promise<IotDeviceEntity>;
+
+		/**
+		 * 列表查询
+		 */
+		list(data?: any): Promise<IotDeviceEntity[]>;
+
+		/**
+		 * 分页查询
+		 */
+		page(data?: any): Promise<IotDevicePageResponse>;
+
+		/**
+		 * 新增
+		 */
+		add(data?: any): Promise<any>;
+
+		/**
+		 * 权限标识
+		 */
+		permission: {
+			delete: string;
+			update: string;
+			info: string;
+			list: string;
+			page: string;
+			add: string;
+		};
+
+		/**
+		 * 权限状态
+		 */
+		_permission: {
+			delete: boolean;
+			update: boolean;
+			info: boolean;
+			list: boolean;
+			page: boolean;
+			add: boolean;
+		};
+
+		request: Request;
+	}
+
+	interface IotProduct {
+		/**
+		 * 删除
+		 */
+		delete(data?: any): Promise<any>;
+
+		/**
+		 * 修改
+		 */
+		update(data?: any): Promise<any>;
+
+		/**
+		 * 单个信息
+		 */
+		info(data?: any): Promise<IotProductEntity>;
+
+		/**
+		 * 列表查询
+		 */
+		list(data?: any): Promise<IotProductEntity[]>;
+
+		/**
+		 * 分页查询
+		 */
+		page(data?: any): Promise<IotProductPageResponse>;
+
+		/**
+		 * 新增
+		 */
+		add(data?: any): Promise<any>;
+
+		/**
+		 * 权限标识
+		 */
+		permission: {
+			delete: string;
+			update: string;
+			info: string;
+			list: string;
+			page: string;
+			add: string;
+		};
+
+		/**
+		 * 权限状态
+		 */
+		_permission: {
+			delete: boolean;
+			update: boolean;
+			info: boolean;
+			list: boolean;
+			page: boolean;
+			add: boolean;
+		};
+
+		request: Request;
+	}
+
+	interface IotProduction_line {
+		/**
+		 * 删除
+		 */
+		delete(data?: any): Promise<any>;
+
+		/**
+		 * 修改
+		 */
+		update(data?: any): Promise<any>;
+
+		/**
+		 * 单个信息
+		 */
+		info(data?: any): Promise<IotProductionLineEntity>;
+
+		/**
+		 * 列表查询
+		 */
+		list(data?: any): Promise<IotProductionLineEntity[]>;
+
+		/**
+		 * 分页查询
+		 */
+		page(data?: any): Promise<IotProduction_linePageResponse>;
+
+		/**
+		 * 新增
+		 */
+		add(data?: any): Promise<any>;
+
+		/**
+		 * 权限标识
+		 */
+		permission: {
+			delete: string;
+			update: string;
+			info: string;
+			list: string;
+			page: string;
+			add: string;
+		};
+
+		/**
+		 * 权限状态
+		 */
+		_permission: {
+			delete: boolean;
+			update: boolean;
+			info: boolean;
+			list: boolean;
+			page: boolean;
+			add: boolean;
+		};
+
+		request: Request;
+	}
+
+	interface IotProduction_log {
+		/**
+		 * 删除
+		 */
+		delete(data?: any): Promise<any>;
+
+		/**
+		 * 单个信息
+		 */
+		info(data?: any): Promise<IotProductionLogEntity>;
+
+		/**
+		 * 列表查询
+		 */
+		list(data?: any): Promise<IotProductionLogEntity[]>;
+
+		/**
+		 * 分页查询
+		 */
+		page(data?: any): Promise<IotProduction_logPageResponse>;
+
+		/**
+		 * 权限标识
+		 */
+		permission: { delete: string; info: string; list: string; page: string };
+
+		/**
+		 * 权限状态
+		 */
+		_permission: { delete: boolean; info: boolean; list: boolean; page: boolean };
+
+		request: Request;
+	}
+
+	interface IotSimulate {
+		/**
+		 * 权限标识
+		 */
+		permission: {};
+
+		/**
+		 * 权限状态
+		 */
+		_permission: {};
+
+		request: Request;
+	}
+
+	interface IotStation {
+		/**
+		 * 删除
+		 */
+		delete(data?: any): Promise<any>;
+
+		/**
+		 * 修改
+		 */
+		update(data?: any): Promise<any>;
+
+		/**
+		 * 单个信息
+		 */
+		info(data?: any): Promise<IotStationEntity>;
+
+		/**
+		 * 列表查询
+		 */
+		list(data?: any): Promise<IotStationEntity[]>;
+
+		/**
+		 * 分页查询
+		 */
+		page(data?: any): Promise<IotStationPageResponse>;
+
+		/**
+		 * 新增
+		 */
+		add(data?: any): Promise<any>;
+
+		/**
+		 * 权限标识
+		 */
+		permission: {
+			delete: string;
+			update: string;
+			info: string;
+			list: string;
+			page: string;
+			add: string;
+		};
+
+		/**
+		 * 权限状态
+		 */
+		_permission: {
+			delete: boolean;
+			update: boolean;
+			info: boolean;
+			list: boolean;
+			page: boolean;
+			add: boolean;
+		};
+
+		request: Request;
+	}
+
 	interface PluginInfo {
 		/**
 		 * 安装插件
@@ -2213,6 +2738,14 @@ declare namespace Eps {
 		};
 		demo: { goods: DemoGoods; tenant: DemoTenant };
 		dict: { info: DictInfo; type: DictType };
+		iot: {
+			device: IotDevice;
+			product: IotProduct;
+			production_line: IotProduction_line;
+			production_log: IotProduction_log;
+			simulate: IotSimulate;
+			station: IotStation;
+		};
 		plugin: { info: PluginInfo };
 		recycle: { data: RecycleData };
 		space: { info: SpaceInfo; type: SpaceType };

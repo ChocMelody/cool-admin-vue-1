@@ -1,0 +1,20 @@
+{
+	"智能产线监控中心": "Smart Production Line Monitoring Center",
+	"运行状态": "Status",
+	"正常运行": "Running",
+	"生产效率": "Efficiency",
+	"今日产量": "Today's Output",
+	"工站": "Station",
+	"在制品": "In Progress",
+	"选择产线": "Select Line",
+	"刷新数据": "Refresh",
+	"生产日志": "Production Log",
+	"获取产线列表失败": "Failed to load production lines",
+	"产线监控": "Line Monitor",
+	"IOT物联网": "IOT",
+	"设备管理": "Device Management",
+	"产线管理": "Production Line",
+	"工站管理": "Station Management",
+	"产品管理": "Product Management",
+	"生产记录": "Production Records"
+}
